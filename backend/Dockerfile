@@ -1,5 +1,6 @@
 FROM node:alpine
 COPY package.json package.json
+RUN npm cache clean --force
 RUN npm install
 COPY . .
 EXPOSE 3000
