@@ -1,11 +1,8 @@
-FROM node:alpine
-COPY package*.json ./
-RUN npm install -g npm@latest
-RUN npm cache clean --force
-RUN npm i
-COPY . .
-EXPOSE 3000
-
+FROM node:22-alpine
+WORKDIR /opt/app
+COPY package.json package.json
+RUN npm install
+ADD . .
 RUN npm run build
 
 CMD ["npm", "start"]
