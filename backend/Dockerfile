@@ -1,5 +1,6 @@
 FROM node:alpine
 COPY package.json package.json
+RUN npm install -g npm@latest
 RUN npm cache clean --force
 RUN npm install
 COPY . .
