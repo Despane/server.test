@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
+    "start": "node dist/server.js",
     "product": "pm2 start dist/server.js --watch",
     "test": "ts-node src/test.ts"
   },
