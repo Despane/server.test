@@ -15,17 +15,17 @@ services:
     networks:
       - environment
 
-  certbot:
-    container_name: certbot
-    image: certbot/certbot:latest
-    depends_on:
-      - nginx
-    volumes:
-      - ./certbot/log:/var/log/letsencrypt
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    networks:
-      - environment
+#  certbot:
+#    container_name: certbot
+#    image: certbot/certbot:latest
+#    depends_on:
+#      - nginx
+#    volumes:
+#      - ./certbot/log:/var/log/letsencrypt
+#      - ./certbot/conf:/etc/letsencrypt
+#      - ./certbot/www:/var/www/certbot
+#    networks:
+#      - environment
 
 networks:
   environment:
