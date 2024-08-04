@@ -1,6 +1,6 @@
 FROM node:22-alpine
 WORKDIR /opt/app
-COPY package.json package.json
+COPY package*.json ./
 RUN npm install
 ADD . .
 RUN npm run build
