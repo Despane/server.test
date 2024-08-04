@@ -19,6 +19,7 @@ services:
     container_name: certbot
     image: certbot/certbot:latest
     volumes:
+      - ./certbot/log:/var/log/letsencrypt/
       - ./certbot/www/:/var/www/certbot/
       - ./certbot/conf/:/etc/letsencrypt/
     networks:
