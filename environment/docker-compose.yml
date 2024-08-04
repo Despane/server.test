@@ -14,6 +14,16 @@ services:
       - ./certbot/www:/war/www/certbot
     networks:
       - environment
+
+  certbot:
+    container_name: certbot
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    networks:
+      - environment
+
 networks:
   environment:
     external: true
