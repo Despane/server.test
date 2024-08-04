@@ -7,3 +7,9 @@ services:
       - "3001:3000"
     env_file:
       - ./.env
+    networks:
+      - environment
+
+networks:
+  environment:
+    external: true

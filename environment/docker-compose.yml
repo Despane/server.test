@@ -12,11 +12,18 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/war/www/certbot
-  certbot:
-    container_name: certbot
-    image: certbot/certbot:latest
-    depends_on:
-      - nginx
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+    networks:
+      - environment
+
+#  certbot:
+#    container_name: certbot
+#    image: certbot/certbot:latest
+#    depends_on:
+#      - nginx
+#    volumes:
+#      - ./certbot/conf:/etc/letsencrypt
+#      - ./certbot/www:/var/www/certbot
+
+networks:
+  environment:
+    external: true
