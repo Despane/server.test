@@ -10,22 +10,21 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d
-      - ./certbot/www:/var/www/certbot
-      - ./certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot:/var/www/certbot
+      - ./nginx/certs:/etc/letsencrypt
     networks:
       - environment
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 
-#  certbot:
-#    container_name: certbot
-#    image: certbot/certbot:latest
-#    depends_on:
-#      - nginx
-#    volumes:
-#      - ./certbot/log:/var/log/letsencrypt
-#      - ./certbot/conf:/etc/letsencrypt
-#      - ./certbot/www:/var/www/certbot
-#    networks:
-#      - environment
+  certbot:
+    container_name: certbot
+    image: certbot/certbot:latest
+    volumes:
+      - ./nginx/certs:/etc/letsencrypt
+      - ./nginx/certbot:/var/www/certbot
+    networks:
+      - environment
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 networks:
   environment:
