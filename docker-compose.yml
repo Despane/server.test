@@ -6,7 +6,7 @@ services:
     build:
       context: ./backend
     ports:
-      - "3001:3001"
+      - "3000:3000"
     networks:
       - environment
 
