@@ -5,7 +5,7 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(bitcoder.ru www.bitcoder.ru)
+domains=(bitcoder.ru)
 rsa_key_size=4096
 data_path="./certbot"
 email="letsencryptcerts@bitcoder.ru" # Adding a valid address is strongly recommended
@@ -17,7 +17,6 @@ if [ -d "$data_path" ]; then
     exit
   fi
 fi
-
 
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
   echo "### Downloading recommended TLS parameters ..."
@@ -37,7 +36,6 @@ docker-compose run --rm --entrypoint "\
     -subj '/CN=localhost'" certbot
 echo
 
-
 echo "### Starting nginx ..."
 docker-compose up --force-recreate -d nginx
 echo
@@ -48,7 +46,6 @@ docker-compose run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/archive/$domains && \
   rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot
 echo
-
 
 echo "### Requesting Let's Encrypt certificate for $domains ..."
 #Join $domains to -d args
