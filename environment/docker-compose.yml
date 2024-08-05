@@ -10,8 +10,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - ./nginx/certs:/etc/letsencrypt
+      - ./nginx/certbot:/var/www/certbot
     networks:
       - environment
 
@@ -19,8 +19,8 @@ services:
     container_name: certbot
     image: certbot/certbot:latest
     volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - ./nginx/certs:/etc/letsencrypt
+      - ./nginx/certbot:/var/www/certbot
     networks:
       - environment
 
