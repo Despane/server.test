@@ -1,25 +1,21 @@
 #!/bin/bash
 
-DOMAIN="bitcoder.ru"
-NGINX_CONF_DIR="nginx/conf"
-NGINX_CONF_FILE="${NGINX_CONF_DIR}/${DOMAIN}.conf"
+# Проверка аргументов
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 DOMAIN PROXY_PASS"
+    exit 1
+fi
+
+DOMAIN="$1"
+PROXY_PASS="$2"
+NGINX_CONF_FILE="nginx/conf/${DOMAIN}.conf"
 
 # Проверить, существует ли конфигурационный файл
 if [ -f "$NGINX_CONF_FILE" ]; then
     echo "Конфигурационный файл $NGINX_CONF_FILE уже существует. Скрипт завершен."
     exit 0
-fi
-
-# Проверить, запущен ли Docker Compose
-if docker-compose ps | grep -q "Up"; then
-    echo "Docker Compose запущен, останавливаем контейнеры..."
-    docker-compose down --rmi all
 else
-    echo "Docker Compose не запущен, продолжаем..."
-fi
-
-# Создать начальный конфигурационный файл для nginx
-cat <<EOL > "$NGINX_CONF_FILE"
+    cat <<EOL > "$NGINX_CONF_FILE"
 server {
     listen 80;
     server_name $DOMAIN;
@@ -34,9 +30,18 @@ server {
     }
 }
 EOL
+fi
+
+# Проверить, запущен ли Docker Compose
+if docker-compose ps | grep -q "Up"; then
+    echo "Docker Compose запущен, останавливаем контейнеры..."
+    docker-compose down --rmi all
+fi
+
+docker-compose up -d
 
 # Выпустить сертификат
-docker-compose run --rm certbot certonly --webroot -w /var/www/certbot --force-renewal --email letsencrypt@bitcoder.ru -d $DOMAIN --agree-tos
+docker-compose run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ -d $DOMAIN
 
 # Проверить успешность выполнения команды
 if [ $? -eq 0 ]; then
@@ -57,7 +62,6 @@ server {
         return 301 https://\$host\$request_uri;
     }
 }
-
 server {
     listen 443 ssl;
     server_name $DOMAIN;
@@ -67,7 +71,7 @@ server {
     ssl_certificate_key /etc/letsencrypt/live/$DOMAIN/privkey.pem;
 
     location / {
-        proxy_pass http://backend:3000;
+        proxy_pass http://$PROXY_PASS;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -77,7 +81,7 @@ server {
 EOL
 
     # Перезапустить nginx для применения изменений
-    docker-compose up -d
+    docker-compose restart nginx
 else
     echo "Ошибка при выпуске сертификата для домена $DOMAIN"
 fi
