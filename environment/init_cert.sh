@@ -40,11 +40,11 @@ fi
 
 # Проверить, запущен ли Docker Compose
 if docker-compose ps | grep -q "Up"; then
-    echo "Docker Compose запущен, останавливаем контейнеры..."
-    docker-compose down --rmi all
+    echo "Docker Compose запущен"
+    docker-compose restart nginx
+else
+    docker-compose up -d
 fi
-
-docker-compose up -d
 
 # Выпустить сертификат
 docker-compose run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --email $EMAIL --agree-tos -d $DOMAIN
