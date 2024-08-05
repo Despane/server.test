@@ -8,7 +8,13 @@ fi
 
 DOMAIN="$1"
 PROXY_PASS="$2"
-NGINX_CONF_FILE="nginx/conf/${DOMAIN}.conf"
+EMAIL="letsencrypt.certs@bitcoder.ru"
+NGINX_CONF_DIR="nginx/conf"
+NGINX_CONF_FILE="${NGINX_CONF_DIR}/${DOMAIN}.conf"
+
+if [ ! -d "$NGINX_CONF_DIR" ]; then
+    mkdir -p "$NGINX_CONF_DIR"
+fi
 
 # Проверить, существует ли конфигурационный файл
 if [ -f "$NGINX_CONF_FILE" ]; then
@@ -41,7 +47,7 @@ fi
 docker-compose up -d
 
 # Выпустить сертификат
-docker-compose run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ -d $DOMAIN
+docker-compose run --rm certbot certonly --webroot --webroot-path /var/www/certbot/ --email $EMAIL --agree-tos -d $DOMAIN
 
 # Проверить успешность выполнения команды
 if [ $? -eq 0 ]; then
